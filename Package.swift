@@ -7,13 +7,28 @@ let package = Package(
     platforms: [.iOS(.v13)],
     products: [
         .library(
-            name: "TelegramHighlights",
-            targets: ["TelegramHighlights"]
+            name: "DustEffect",
+            targets: ["DustEffect"]
+        ),
+        .library(
+            name: "MetalEngine",
+            targets: ["MetalEngine"]
         ),
     ],
     targets: [
         .target(
-            name: "TelegramHighlights"
+            name: "Display"
+        ),
+        .target(
+            name: "DustEffect",
+            dependencies: ["MetalEngine"]
+        ),
+        .target(
+            name: "MetalEngine",
+            dependencies: ["Display", "ShelfPack"]
+        ),
+        .target(
+            name: "ShelfPack"
         ),
     ]
 )
