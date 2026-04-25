@@ -6,12 +6,19 @@
 //
 
 enum Highlight: CaseIterable {
-    case helloWorld
+    case dustEffect
     
     var title: String {
         switch self {
-        case .helloWorld:
-            "Hello World"
+        case .dustEffect:
+            "Dust Effect"
+        }
+    }
+    
+    var description: String {
+        switch self {
+        case .dustEffect:
+            "A.K.A. Thanos Snap"
         }
     }
 }

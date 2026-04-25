@@ -4,6 +4,12 @@ An unofficial curated collection of reusable implementations extracted from [Tel
 
 This project is intended for educational purposes and code reuse. It is not affiliated with, endorsed by, or sponsored by Telegram.
 
+## Available Effects
+
+| Effect | Description | Links |
+| --- | --- | --- |
+| Dust Effect | Thanos Snap-style effect that vaporizes a content snapshot into pixels. | [Details](Sources/DustEffect), [Example](Examples/TelegramHighlights/Views/DustEffectView.swift) |
+
 ## License
 
 This repository is licensed under the GNU General Public License, version 2 or any later version (**GPL-2.0-or-later**). See the [LICENSE](LICENSE) file for the full license text.

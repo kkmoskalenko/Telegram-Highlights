@@ -15,17 +15,26 @@ struct TelegramHighlightsApp: App {
         WindowGroup(appTitle) {
             NavigationSplitView {
                 List(Highlight.allCases, id: \.self, selection: $selection) { highlight in
-                    NavigationLink(highlight.title, value: highlight)
+                    NavigationLink(value: highlight) {
+                        VStack(alignment: .leading) {
+                            Text(highlight.title)
+                                .font(.headline)
+                            Text(highlight.description)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
                 }
                 .navigationTitle(appTitle)
             } detail: {
                 switch selection {
-                case .helloWorld:
-                    ContentView()
+                case .dustEffect:
+                    DustEffectDemoView()
                 case nil:
                     EmptyView()
                 }
             }
+            .background(MetalEngineRootLayerHost())
         }
     }
     
