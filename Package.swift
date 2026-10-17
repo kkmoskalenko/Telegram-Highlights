@@ -11,17 +11,33 @@ let package = Package(
             targets: ["DustEffect"]
         ),
         .library(
+            name: "GlassBackground",
+            targets: ["GlassBackground"]
+        ),
+        .library(
             name: "MetalEngine",
             targets: ["MetalEngine"]
         ),
     ],
     targets: [
         .target(
-            name: "Display"
+            name: "Display",
+            dependencies: ["UIKitRuntimeUtils"]
         ),
         .target(
             name: "DustEffect",
             dependencies: ["MetalEngine"]
+        ),
+        .target(
+            name: "GlassBackground",
+            dependencies: ["Display", "MeshTransform"]
+        ),
+        .target(
+            name: "MeshTransform",
+            dependencies: ["MeshTransformApi"]
+        ),
+        .target(
+            name: "MeshTransformApi"
         ),
         .target(
             name: "MetalEngine",
@@ -29,6 +45,9 @@ let package = Package(
         ),
         .target(
             name: "ShelfPack"
+        ),
+        .target(
+            name: "UIKitRuntimeUtils"
         ),
     ]
 )
