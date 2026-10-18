@@ -61,3 +61,55 @@ NSObject * _Nullable makeDisplacementMapFilter() {
 NSObject * _Nullable makeColorMatrixFilter() {
     return [(id<GraphicsFilterProtocol>)NSClassFromString(@"CAFilter") filterWithName:@"colorMatrix"];
 }
+
+static void setBoolField(NSObject *object, NSString *name, BOOL value) {
+    SEL selector = NSSelectorFromString(name);
+    NSMethodSignature *signature = [[object class] instanceMethodSignatureForSelector:selector];
+    if (signature == nil) {
+        return;
+    }
+    
+    NSInvocation *inv = [NSInvocation invocationWithMethodSignature:signature];
+    [inv setSelector:selector];
+    [inv setArgument:&value atIndex:2];
+    [inv setTarget:object];
+    [inv invoke];
+}
+
+static void setLongLongField(NSObject *object, NSString *name, long long value) {
+    SEL selector = NSSelectorFromString(name);
+    NSMethodSignature *signature = [[object class] instanceMethodSignatureForSelector:selector];
+    if (signature == nil) {
+        return;
+    }
+    
+    NSInvocation *inv = [NSInvocation invocationWithMethodSignature:signature];
+    [inv setSelector:selector];
+    [inv setArgument:&value atIndex:2];
+    [inv setTarget:object];
+    [inv invoke];
+}
+
+void setMonochromaticEffectImpl(UIView * _Nonnull view, bool isEnabled) {
+    if (@available(iOS 26.0, *)) {
+        static NSString *key1 = nil;
+        static NSString *key2 = nil;
+        static NSString *key3 = nil;
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            key1 = [[@"_" stringByAppendingString:@"setAllows"] stringByAppendingString:@"MonochromaticTreatment:"];
+            key2 = [[@"_" stringByAppendingString:@"setEnable"] stringByAppendingString:@"MonochromaticTreatment:"];
+            key3 = [[@"_" stringByAppendingString:@"set"] stringByAppendingString:@"MonochromaticTreatment:"];
+        });
+        
+        if (isEnabled) {
+            setBoolField(view, key1, true);
+            setBoolField(view, key2, true);
+            setLongLongField(view, key3, 2);
+        } else {
+            setBoolField(view, key1, false);
+            setBoolField(view, key2, false);
+            setLongLongField(view, key3, 0);
+        }
+    }
+}

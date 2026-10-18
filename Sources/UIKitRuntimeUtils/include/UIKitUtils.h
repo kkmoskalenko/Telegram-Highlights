@@ -23,3 +23,5 @@ NSObject * _Nullable makeColorInvertFilter();
 NSObject * _Nullable makeMonochromeFilter();
 NSObject * _Nullable makeDisplacementMapFilter();
 NSObject * _Nullable makeColorMatrixFilter();
+
+void setMonochromaticEffectImpl(UIView * _Nonnull view, bool isEnabled);
