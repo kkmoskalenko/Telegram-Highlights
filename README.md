@@ -9,6 +9,7 @@ This project is intended for educational purposes and code reuse. It is not affi
 | Effect | Description | Links |
 | --- | --- | --- |
 | Dust Effect | Thanos Snap-style effect that vaporizes a content snapshot into pixels. | [Details](Sources/DustEffect), [Example](Examples/TelegramHighlights/Views/DustEffectView.swift) |
+| Glass Background | Custom Liquid Glass effect implementation, with native iOS glass support. | [Details](Sources/GlassBackground), [Example](Examples/TelegramHighlights/Views/GlassBackgroundView.swift) |
 
 ## License
 

@@ -7,11 +7,14 @@
 
 enum Highlight: CaseIterable {
     case dustEffect
+    case glassBackground
     
     var title: String {
         switch self {
         case .dustEffect:
             "Dust Effect"
+        case .glassBackground:
+            "Glass Background"
         }
     }
     
@@ -19,6 +22,8 @@ enum Highlight: CaseIterable {
         switch self {
         case .dustEffect:
             "A.K.A. Thanos Snap"
+        case .glassBackground:
+            "Custom Liquid Glass"
         }
     }
 }

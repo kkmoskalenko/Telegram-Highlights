@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		9B3B75A32F9C9D5600E36B0B /* DustEffect in Frameworks */ = {isa = PBXBuildFile; productRef = 9B3B75A22F9C9D5600E36B0B /* DustEffect */; };
 		9B3B75A52F9C9D7300E36B0B /* MetalEngine in Frameworks */ = {isa = PBXBuildFile; productRef = 9B3B75A42F9C9D7300E36B0B /* MetalEngine */; };
+		9BC07DBA30852685008B1174 /* GlassBackground in Frameworks */ = {isa = PBXBuildFile; productRef = 9BC07DB930852685008B1174 /* GlassBackground */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 			files = (
 				9B3B75A52F9C9D7300E36B0B /* MetalEngine in Frameworks */,
 				9B3B75A32F9C9D5600E36B0B /* DustEffect in Frameworks */,
+				9BC07DBA30852685008B1174 /* GlassBackground in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -82,6 +84,7 @@
 			packageProductDependencies = (
 				9B3B75A22F9C9D5600E36B0B /* DustEffect */,
 				9B3B75A42F9C9D7300E36B0B /* MetalEngine */,
+				9BC07DB930852685008B1174 /* GlassBackground */,
 			);
 			productName = TelegramHighlights;
 			productReference = 9B4BA94A2F6DD7AE0040EC55 /* TG Highlights.app */;
@@ -387,6 +390,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 9B0BE7B12F6DD7F4005FA4EB /* XCLocalSwiftPackageReference "../../Telegram-Highlights" */;
 			productName = MetalEngine;
+		};
+		9BC07DB930852685008B1174 /* GlassBackground */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9B0BE7B12F6DD7F4005FA4EB /* XCLocalSwiftPackageReference "../../Telegram-Highlights" */;
+			productName = GlassBackground;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

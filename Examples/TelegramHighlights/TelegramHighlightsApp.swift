@@ -30,6 +30,8 @@ struct TelegramHighlightsApp: App {
                 switch selection {
                 case .dustEffect:
                     DustEffectDemoView()
+                case .glassBackground:
+                    GlassBackgroundDemoView()
                 case nil:
                     EmptyView()
                 }
