@@ -40,15 +40,16 @@
     {
       "source": "submodules/UIKitRuntimeUtils/Source/UIKitRuntimeUtils/UIViewController+Navigation.m",
       "local": "UIViewController+Navigation.m",
-      "revision": "f1dd7a2dbd02cbbf513e75d5695d8d36d1cf5838",
+      "revision": "fb0e62ba8a147f0821da6aa63c09da7d79a10111",
       "changes": [
-        "Retain EffectSettingsContainerView; remove unrelated implementation and ObjCRuntimeUtils/objc/runtime imports."
+        "Retain EffectSettingsContainerView and glass-blur overrides; remove unrelated implementation and ObjCRuntimeUtils import.",
+        "Register only glass-blur overrides from EffectSettingsContainerView +load on iOS 26 and later; omit luminance overrides and unrelated swizzles."
       ]
     },
     {
       "source": "submodules/UIKitRuntimeUtils/Source/UIKitRuntimeUtils/UIViewController+Navigation.h",
       "local": "include/UIViewController+Navigation.h",
-      "revision": "f1dd7a2dbd02cbbf513e75d5695d8d36d1cf5838",
+      "revision": "fb0e62ba8a147f0821da6aa63c09da7d79a10111",
       "changes": [
         "Retain EffectSettingsContainerView; remove unrelated declarations and WebKit import."
       ]

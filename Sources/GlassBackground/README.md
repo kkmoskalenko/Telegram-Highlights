@@ -14,10 +14,18 @@ The implementation is extracted and adapted from [Telegram iOS](https://github.c
 - `GlassBackgroundView.update(size: CGSize, cornerRadii: GlassBackgroundView.CornerRadii, isDark: Bool, tintColor: GlassBackgroundView.TintColor, isInteractive: Bool = false, isVisible: Bool = true)` accepts independent corner radii.
 - `GlassBackgroundView.CornerRadii.init(topLeft: CGFloat, topRight: CGFloat, bottomLeft: CGFloat, bottomRight: CGFloat)` specifies each corner; `GlassBackgroundView.CornerRadii.init(radius: CGFloat)` sets all four equally.
 - `GlassBackgroundView.TintColor.init(kind: GlassBackgroundView.TintColor.Kind, innerColor: UIColor? = nil, innerInset: CGFloat = 3.0)` configures tint and an optional inset fill. `GlassBackgroundView.TintColor.Kind` has `.panel`, `.clear`, and `.custom(style: GlassBackgroundView.TintColor.CustomStyle, color: UIColor)` cases; `GlassBackgroundView.TintColor.CustomStyle` has `.default` and `.clear` cases.
+- `GlassBackgroundView.TintColor.blended(from:to:fraction:isDark:)` interpolates native tint colors when their styles match; different styles switch at the halfway point. Fractions at or outside the endpoints return the corresponding original tint.
 - `GlassBackgroundView.params: GlassBackgroundView.Params?` is read-only and contains the last applied `shape`, `isDark`, `tintColor`, `isInteractive`, and `isVisible` values.
 - `GlassBackgroundView.useCustomGlassImpl: Bool` is a mutable static flag, defaulting to `false`, that selects the implementation at initialization.
+- `GlassBackgroundView.nativeBlurRadius: CGFloat?` overrides native glass blur on iOS 26+. A positive value sets the radius; `nil` clears the override. The custom implementation ignores it.
+- `GlassBackgroundView.morphBlurRadius: CGFloat?` applies a global blur override to native glass morph containers. Clear it with `nil` after the morph ends.
+- `GlassBackgroundView.renewNativeView()` replaces the native effect view while keeping its effect, shape, and hosted views, ending UIKit's current press feedback. Read `contentView` and `transitionView` again after renewal; their native view identities change. It has no effect on custom glass.
 - `GlassBackgroundContainerView.init(spacing: CGFloat = 7.0)` creates a group. Add surfaces to `GlassBackgroundContainerView.contentView: UIView`.
 - `GlassBackgroundContainerView.update(size: CGSize, isDark: Bool)` lays out the container. Give each child its own frame and `update` call.
+- `GlassBackgroundContainerView.spacing: CGFloat` exposes the configured merge distance. `GlassBackgroundContainerView.mergesShapes: Bool` reports whether the current implementation selection supports native merging.
+- `GlassBackgroundContainerView.nativeBlurRadius: CGFloat?` overrides the native container's blur with the same semantics as the surface property.
+- `GlassBackgroundContainerView.readaptToBackdrop()` makes native glass resample its current backdrop without animation; it has no effect on custom glass.
+- `GlassHighlightGestureRecognizer.pressedScale: CGFloat?` sets an explicit pressed scale when using the recognizer directly. The default `nil` retains size-based enlargement.
 
 ## Setup
 
@@ -80,3 +88,5 @@ See [`GenerateMesh.swift`](../MeshTransform/GenerateMesh.swift) and Bartosz Ciec
 On iOS 26+, the native container uses `UIGlassContainerEffect`, with `spacing` controlling when nearby surfaces merge. The custom container provides grouping and touch routing; each child handles its own feedback.
 
 The custom path depends on private backdrop, filter, and mesh runtime APIs, so test it on your target OS versions and devices. Earlier or less capable systems retain the backdrop treatment without mesh refraction; the system path uses UIKit's glass renderer instead.
+
+Native blur overrides also depend on private runtime hooks for UIKit's backdrop filters. Leaving the optional blur values unset preserves UIKit's blur behavior. The extracted package retains standalone glass views and touch feedback; Telegram's component wrappers, context extraction, and navigation-keyframe APIs are excluded.

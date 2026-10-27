@@ -38,6 +38,12 @@ private let isIpad: Bool = {
 }()
 
 public final class SharedDisplayLinkDriver {
+    /// The last frame's target timestamp and duration, for code that must land a change on a frame (a caught
+    /// transition's swap). Nil before the first frame.
+    public private(set) var lastTargetTimestamp: Double?
+    public private(set) var frameDuration: Double = 1.0 / Double(max(60, UIScreen.main.maximumFramesPerSecond))
+
+
     public enum FramesPerSecond: Comparable {
         case fps(Int)
         case max
@@ -153,14 +159,11 @@ public final class SharedDisplayLinkDriver {
         var hasActiveItems = false
         var maxFramesPerSecond: FramesPerSecond = .fps(30)
         for request in self.requests {
-            if let link = request.link {
+            if let link = request.link, link.isValid && !link.isPaused {
                 if link.framesPerSecond > maxFramesPerSecond {
                     maxFramesPerSecond = link.framesPerSecond
                 }
-                if link.isValid && !link.isPaused {
-                    hasActiveItems = true
-                    break
-                }
+                hasActiveItems = true
             }
         }
         
@@ -211,6 +214,11 @@ public final class SharedDisplayLinkDriver {
         self.isProcessingEvent = true
         
         let duration = displayLink.targetTimestamp - displayLink.timestamp
+        self.lastTargetTimestamp = displayLink.targetTimestamp
+        if duration > 0.0 {
+            self.frameDuration = duration
+        }
+
         
         var removeIndices: [Int]?
         loop: for i in 0 ..< self.requests.count {
@@ -250,9 +258,7 @@ public final class SharedDisplayLinkDriver {
                 self.requests.remove(at: index)
             }
             
-            if self.requests.isEmpty {
-                self.isUpdateRequested = true
-            }
+            self.isUpdateRequested = true
         }
         
         self.isProcessingEvent = false
@@ -395,3 +401,4 @@ public final class ConstantDisplayLinkAnimator {
         self.update()
     }
 }
+

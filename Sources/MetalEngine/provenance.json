@@ -13,13 +13,25 @@
     {
       "source": "submodules/MetalEngine/Sources/MetalEngine.swift",
       "local": "MetalEngine.swift",
-      "revision": "7504a0f92694a3ccbb544e05f97304f8d0891ba9",
+      "revision": "fb0e62ba8a147f0821da6aa63c09da7d79a10111",
       "changes": [
         "Retain iOS implementation; remove macOS imports and conditional branches.",
         "Load the Metal library from Bundle.module instead of MetalEngineMetalSourcesBundle.",
         "Wrap IOSurfaceRef with IOSurface when storing the allocated surface.",
         "Leave presentsWithTransaction disabled."
       ]
+    },
+    {
+      "source": "submodules/MetalEngine/Sources/MetalPipelineCache.swift",
+      "local": "MetalPipelineCache.swift",
+      "revision": "fb0e62ba8a147f0821da6aa63c09da7d79a10111",
+      "changes": []
+    },
+    {
+      "source": "submodules/MetalEngine/Sources/MetalBinaryArchiveSerialization.swift",
+      "local": "MetalBinaryArchiveSerialization.swift",
+      "revision": "fb0e62ba8a147f0821da6aa63c09da7d79a10111",
+      "changes": []
     },
     {
       "source": "submodules/MetalEngine/Sources/MetalEngineShaders.metal",

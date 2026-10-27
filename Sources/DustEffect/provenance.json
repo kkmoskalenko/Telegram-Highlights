@@ -7,7 +7,7 @@
     {
       "source": "submodules/TelegramUI/Components/DustEffect/Sources/DustEffectLayer.swift",
       "local": "DustEffectLayer.swift",
-      "revision": "7504a0f92694a3ccbb544e05f97304f8d0891ba9",
+      "revision": "fb0e62ba8a147f0821da6aa63c09da7d79a10111",
       "changes": [
         "Load the Metal library from Bundle.module instead of DustEffectMetalSourcesBundle and remove BundleMarker.",
         "Remove the unused playsBackwards property."
@@ -16,7 +16,19 @@
     {
       "source": "submodules/TelegramUI/Components/DustEffect/Metal/DustEffectShaders.metal",
       "local": "Metal/DustEffectShaders.metal",
-      "revision": "7504a0f92694a3ccbb544e05f97304f8d0891ba9",
+      "revision": "fb0e62ba8a147f0821da6aa63c09da7d79a10111",
+      "changes": []
+    },
+    {
+      "source": "submodules/TelegramUI/Components/DustEffect/Sources/DustFluidSimulation.swift",
+      "local": "DustFluidSimulation.swift",
+      "revision": "fb0e62ba8a147f0821da6aa63c09da7d79a10111",
+      "changes": []
+    },
+    {
+      "source": "submodules/TelegramUI/Components/DustEffect/Metal/DustFluidShaders.metal",
+      "local": "Metal/DustFluidShaders.metal",
+      "revision": "fb0e62ba8a147f0821da6aa63c09da7d79a10111",
       "changes": []
     },
     {

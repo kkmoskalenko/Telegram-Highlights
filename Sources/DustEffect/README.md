@@ -9,7 +9,7 @@ The implementation is derived from Telegram iOS and uses `MetalEngine` for Metal
 ## API
 
 - `addItem(frame:image:)` adds a snapshot item to dissolve. The frame must be in the dust layer's coordinate space.
-- `animationSpeed` scales the animation clock. The default value is `1.0`.
+- `animationSpeed` scales the dissolve sweep. The particle simulation continues at its own rate so the final grains can finish. The default value is `1.0`.
 - `animateDown` changes the particle direction from upward to downward. The default value is `false`.
 - `becameEmpty` is called after all active items finish and are removed.
 
@@ -38,10 +38,12 @@ A complete SwiftUI/UIKit wrapper is available in [`Examples/TelegramHighlights/V
 
 `addItem(frame:image:)` creates an internal item with the supplied frame and a Metal texture loaded from the image's `cgImage`. If the image cannot be converted into a texture, the item is ignored.
 
-When the layer is in the hierarchy and has active items, it runs from `SharedDisplayLinkDriver` at the maximum available frame rate. Each tick advances the item's `phase`, requests a Metal update, and removes the item when the phase reaches `4.0`. If that was the last item, `becameEmpty` is called.
+When the layer is in the hierarchy and has active items, it runs from `SharedDisplayLinkDriver` at the maximum available frame rate. Each tick advances the item's `phase` and elapsed duration, then requests a Metal update. An item is removed once its phase reaches `4.0` and its duration reaches `0.8 / animationSpeed + 2.1` seconds, allowing the last grains to fade. If that was the last item, the fluid state is released and `becameEmpty` is called.
 
 During the Metal update, the layer allocates one shared particle buffer per item. The particle grid uses the integer point size of the item frame, so a `120 x 80` frame produces `9,600` rendered particles. The item frame is flipped vertically before rendering because UIKit layer coordinates and Metal clip-space mapping use different origins.
 
-The compute work has two stages. The initialization shader gives each particle a starting offset of zero, a randomized radial velocity, and a lifetime between `0.7` and `1.5` seconds. The update shader moves particles by velocity, applies vertical acceleration, and decreases lifetime. It also gates movement through a horizontal ease-in window, so the dissolve rolls across the snapshot instead of starting everywhere at once.
+The initialization shader gives each particle a starting offset of zero, a randomized radial velocity, and a lifetime between `2.0` and `4.1` simulation seconds. A soft sweep mixes horizontal position with noise and randomness to release the grains gradually. Grains just ahead of the sweep tremble before breaking away.
 
-The render pass draws every particle as a small textured quad. Each quad samples the matching region of the original snapshot, applies the simulated offset, and fades out during the last `0.3` seconds of its particle lifetime.
+One coarse GPU fluid simulation covers the layer and is shared by its items. Pushes along the dissolve front stir the fluid; the particle update samples a stream function derived from the fluid's curl, carrying the grains through uneven currents alongside their own drift. The simulation runs twice as fast as elapsed time and follows UIKit's animation-duration factor.
+
+The render pass initially draws each particle as its original square of the snapshot. Released grains become round, shrink at different rates to a single pixel, and twinkle with occasional small blooms. They slow near the end of their lifetime, fade during the last `0.3` simulation seconds, and collapse outside the viewport once invisible.

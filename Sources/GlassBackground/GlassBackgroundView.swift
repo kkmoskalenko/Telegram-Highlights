@@ -277,6 +277,40 @@ public class GlassBackgroundView: UIView {
             self.innerColor = innerColor
             self.innerInset = innerInset
         }
+
+        /// The native glass effect this tint gives: whether its style is `.clear` (else `.regular`), and its tint color.
+        func nativeEffect(isDark: Bool) -> (isClear: Bool, color: UIColor?) {
+            switch self.kind {
+            case .panel:
+                return (false, UIColor(white: 1.0, alpha: isDark ? 0.025 : 0.1))
+            case let .custom(style, color):
+                return (style == .clear, color)
+            case .clear:
+                return (true, isDark ? UIColor(white: 0.0, alpha: 0.28) : nil)
+            }
+        }
+
+        /// The native glass tint `fraction` of the way from `from` to `to`, as one effect: their tint colors mixed when
+        /// their styles match, else `to` from halfway. For native glass only: the custom glass draws a panel otherwise.
+        public static func blended(from: TintColor, to: TintColor, fraction: CGFloat, isDark: Bool) -> TintColor {
+            if fraction <= 0.0 {
+                return from
+            }
+            if fraction >= 1.0 {
+                return to
+            }
+            let start = from.nativeEffect(isDark: isDark)
+            let end = to.nativeEffect(isDark: isDark)
+            guard start.isClear == end.isClear, let startColor = start.color ?? end.color?.withAlphaComponent(0.0), let endColor = end.color ?? start.color?.withAlphaComponent(0.0) else {
+                return fraction < 0.5 ? from : to
+            }
+            var r0: CGFloat = 0.0, g0: CGFloat = 0.0, b0: CGFloat = 0.0, a0: CGFloat = 0.0
+            var r1: CGFloat = 0.0, g1: CGFloat = 0.0, b1: CGFloat = 0.0, a1: CGFloat = 0.0
+            startColor.getRed(&r0, green: &g0, blue: &b0, alpha: &a0)
+            endColor.getRed(&r1, green: &g1, blue: &b1, alpha: &a1)
+            let color = UIColor(red: r0 + (r1 - r0) * fraction, green: g0 + (g1 - g0) * fraction, blue: b0 + (b1 - b0) * fraction, alpha: a0 + (a1 - a0) * fraction)
+            return TintColor(kind: .custom(style: start.isClear ? .clear : .default, color: color), innerColor: to.innerColor, innerInset: to.innerInset)
+        }
     }
     
     public struct CornerRadii: Equatable {
@@ -476,9 +510,17 @@ public class GlassBackgroundView: UIView {
     private let legacyHighlightClippingContext: ClippingShapeContext?
     private var glassHighlightRecognizer: GlassHighlightGestureRecognizer?
     
-    private let nativeView: UIVisualEffectView?
-    private let nativeViewClippingContext: ClippingShapeContext?
+    private var nativeView: UIVisualEffectView?
+    private var nativeViewClippingContext: ClippingShapeContext?
     private let nativeParamsView: EffectSettingsContainerView?
+
+    public var nativeBlurRadius: CGFloat? {
+        didSet {
+            if self.nativeBlurRadius != oldValue {
+                self.applyNativeBlurRadius()
+            }
+        }
+    }
     
     private let foregroundView: UIImageView?
     private let shadowView: UIImageView?
@@ -501,6 +543,32 @@ public class GlassBackgroundView: UIView {
         } else {
             return self.contentContainer
         }
+    }
+
+    /// Puts a new effect view in place of the native one, with the same effect, shape and content (`contentView` is then
+    /// the new one's). UIKit's press on interactive glass (`_UIFlexInteraction`) belongs to the effect view it started on,
+    /// and a glass it is pressing is not fused with its neighbours in a glass container: it keeps its own edge inside
+    /// their merged shape (probed on iOS 27; removing the interaction leaves the press's lift and tint behind, a new effect
+    /// view is clean). The press ends with the old view; a caller that wants it continues it. Does nothing for the custom
+    /// glass.
+    public func renewNativeView() {
+        guard let nativeParamsView = self.nativeParamsView, let previous = self.nativeView, let shape = self.nativeViewClippingContext?.shape else {
+            return
+        }
+        let nativeView = UIVisualEffectView(effect: previous.effect)
+        nativeView.overrideUserInterfaceStyle = previous.overrideUserInterfaceStyle
+        // The size the glass was laid out at: a press grows the old view around it.
+        let size = nativeParamsView.bounds.size
+        nativeView.frame = CGRect(origin: CGPoint(), size: size)
+        let clippingContext = ClippingShapeContext(view: nativeView)
+        clippingContext.update(shape: shape, size: size)
+        for subview in previous.contentView.subviews {
+            nativeView.contentView.addSubview(subview)
+        }
+        nativeParamsView.insertSubview(nativeView, aboveSubview: previous)
+        previous.removeFromSuperview()
+        self.nativeView = nativeView
+        self.nativeViewClippingContext = clippingContext
     }
     
     public private(set) var params: Params?
@@ -622,6 +690,13 @@ public class GlassBackgroundView: UIView {
         if let glassHighlightRecognizer = self.glassHighlightRecognizer {
             glassHighlightRecognizer.isEnabled = isInteractive
         }
+
+        // UIKit can sample backdrop luminance synchronously while changing
+        // appearance or effect. Install the new limits before either update.
+        if let nativeParamsView = self.nativeParamsView {
+            nativeParamsView.lumaMin = isDark ? 0.0 : 0.8
+            nativeParamsView.lumaMax = isDark ? 0.15 : 0.801
+        }
         
         if let nativeView = self.nativeView, let nativeViewClippingContext = self.nativeViewClippingContext, (nativeView.bounds.size != size || nativeViewClippingContext.shape != shape || (nativeView.overrideUserInterfaceStyle == .dark) != isDark) {
             nativeViewClippingContext.update(shape: shape, size: size)
@@ -729,38 +804,14 @@ public class GlassBackgroundView: UIView {
                 #endif
                 foregroundView.alpha = isVisible ? 1.0 : 0.0
             } else {
-                if let nativeParamsView = self.nativeParamsView, let nativeView = self.nativeView {
+                if let nativeView = self.nativeView {
                     if #available(iOS 26.0, *) {
                         var glassEffect: UIGlassEffect?
                         
                         if isVisible {
-                            let glassEffectValue: UIGlassEffect
-                            switch tintColor.kind {
-                            case .panel:
-                                if isDark {
-                                    glassEffectValue = UIGlassEffect(style: .regular)
-                                    glassEffectValue.tintColor = UIColor(white: 1.0, alpha: 0.025)
-                                } else {
-                                    glassEffectValue = UIGlassEffect(style: .regular)
-                                    glassEffectValue.tintColor = UIColor(white: 1.0, alpha: 0.1)
-                                }
-                            case let .custom(style, color):
-                                switch style {
-                                case .default:
-                                    glassEffectValue = UIGlassEffect(style: .regular)
-                                    glassEffectValue.tintColor = color
-                                case .clear:
-                                    glassEffectValue = UIGlassEffect(style: .clear)
-                                    glassEffectValue.tintColor = color
-                                }
-                            case .clear:
-                                glassEffectValue = UIGlassEffect(style: .clear)
-                                if isDark {
-                                    glassEffectValue.tintColor = UIColor(white: 0.0, alpha: 0.28)
-                                } else {
-                                    glassEffectValue.tintColor = nil
-                                }
-                            }
+                            let nativeTint = tintColor.nativeEffect(isDark: isDark)
+                            let glassEffectValue = UIGlassEffect(style: nativeTint.isClear ? .clear : .regular)
+                            glassEffectValue.tintColor = nativeTint.color
                             glassEffectValue.isInteractive = isInteractive
                             glassEffect = glassEffectValue
                         }
@@ -775,14 +826,6 @@ public class GlassBackgroundView: UIView {
                             }
                         } else {
                             nativeView.effect = glassEffect
-                        }
-                        
-                        if isDark {
-                            nativeParamsView.lumaMin = 0.0
-                            nativeParamsView.lumaMax = 0.15
-                        } else {
-                            nativeParamsView.lumaMin = 0.8
-                            nativeParamsView.lumaMax = 0.801
                         }
                     }
                 }
@@ -806,6 +849,28 @@ public class GlassBackgroundView: UIView {
     override public func willMove(toWindow newWindow: UIWindow?) {
         super.willMove(toWindow: newWindow)
     }
+
+    private func applyNativeBlurRadius() {
+        guard let nativeParamsView = self.nativeParamsView else {
+            return
+        }
+        let radius = Double(self.nativeBlurRadius ?? 0.0)
+        if radius == 0.0 && nativeParamsView.glassBlurRadius == 0.0 {
+            return
+        }
+        nativeParamsView.glassBlurRadius = radius
+        EffectSettingsContainerView.applyGlassBlurRadius(radius, toLayerTree: nativeParamsView.layer, depth: 0)
+    }
+
+    public static var morphBlurRadius: CGFloat? {
+        get {
+            let value = EffectSettingsContainerView.morphGlassBlurRadius
+            return value > 0.0 ? CGFloat(value) : nil
+        }
+        set {
+            EffectSettingsContainerView.morphGlassBlurRadius = Double(newValue ?? 0.0)
+        }
+    }
 }
 
 public final class GlassBackgroundContainerView: UIView {
@@ -824,7 +889,21 @@ public final class GlassBackgroundContainerView: UIView {
         }
     }
     
+    /// How close two shapes come before they merge (`UIGlassContainerEffect.spacing`, which UIKit passes on unchanged as
+    /// the container's SDF smoothness: measured on iOS 27). Only native glass merges (`mergesShapes`).
+    public let spacing: CGFloat
+
+    /// Whether containers merge the glass shapes in them: native glass does, the custom implementation (before iOS 26, or
+    /// `GlassBackgroundView.useCustomGlassImpl`) only stacks them.
+    public static var mergesShapes: Bool {
+        if #available(iOS 26.0, *), !GlassBackgroundView.useCustomGlassImpl {
+            return true
+        }
+        return false
+    }
+
     public init(spacing: CGFloat = 7.0) {
+        self.spacing = spacing
         if #available(iOS 26.0, *), !GlassBackgroundView.useCustomGlassImpl {
             let effect = UIGlassContainerEffect()
             effect.spacing = spacing
@@ -915,17 +994,31 @@ public final class GlassBackgroundContainerView: UIView {
         return result
     }
     
+    public var nativeBlurRadius: CGFloat? {
+        didSet {
+            if self.nativeBlurRadius != oldValue {
+                self.applyNativeBlurRadius()
+            }
+        }
+    }
+
+    private func applyNativeBlurRadius() {
+        guard let nativeParamsView = self.nativeParamsView else {
+            return
+        }
+        let radius = Double(self.nativeBlurRadius ?? 0.0)
+        if radius == 0.0 && nativeParamsView.glassBlurRadius == 0.0 {
+            return
+        }
+        nativeParamsView.glassBlurRadius = radius
+        EffectSettingsContainerView.applyGlassBlurRadius(radius, toLayerTree: nativeParamsView.layer, depth: 0)
+    }
+
     public func update(size: CGSize, isDark: Bool) {
         if let nativeParamsView = self.nativeParamsView, let nativeView = self.nativeView {
+            nativeParamsView.lumaMin = isDark ? 0.0 : 0.8
+            nativeParamsView.lumaMax = isDark ? 0.15 : 0.801
             nativeView.overrideUserInterfaceStyle = isDark ? .dark : .light
-            
-            if isDark {
-                nativeParamsView.lumaMin = 0.0
-                nativeParamsView.lumaMax = 0.15
-            } else {
-                nativeParamsView.lumaMin = 0.8
-                nativeParamsView.lumaMax = 0.801
-            }
             if let nativeParamsView = self.nativeParamsView {
                 nativeParamsView.frame = CGRect(origin: CGPoint(x: 0.0, y: 0.0), size: size)
             }
@@ -933,6 +1026,20 @@ public final class GlassBackgroundContainerView: UIView {
             nativeView.frame = CGRect(origin: CGPoint(), size: size)
         } else if let legacyView = self.legacyView {
             legacyView.frame = CGRect(origin: CGPoint(), size: size)
+        }
+    }
+
+    /// Makes every glass in the container adapt again to the backdrop it is over now. UIKit's glass keeps how it adapted
+    /// to its backdrop when it joined the container (measured on iOS 27: a capsule that came over a white backdrop stayed
+    /// light over a coloured one later, whatever its tint, effect or luminance limits were set to since); setting the
+    /// container's effect again is what makes it look again. A glass that already matches its backdrop does not change.
+    public func readaptToBackdrop() {
+        guard let nativeView = self.nativeView, let effect = nativeView.effect else {
+            return
+        }
+        UIView.performWithoutAnimation {
+            nativeView.effect = nil
+            nativeView.effect = effect
         }
     }
     
