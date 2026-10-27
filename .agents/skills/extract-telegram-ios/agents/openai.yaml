@@ -1,0 +1,3 @@
+interface:
+  display_name: "Extract Telegram iOS"
+  short_description: "Extract and maintain reusable Telegram iOS features"
