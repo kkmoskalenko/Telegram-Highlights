@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "upstream": {
+    "repository": "https://github.com/TelegramMessenger/Telegram-iOS"
+  },
+  "files": [
+    {
+      "source": "submodules/Utils/ShelfPack/Sources/ShelfPack.mm",
+      "local": "ShelfPack.mm",
+      "revision": "7504a0f92694a3ccbb544e05f97304f8d0891ba9",
+      "changes": [
+        "Use the package-local ShelfPack header import."
+      ]
+    },
+    {
+      "source": "submodules/Utils/ShelfPack/PublicHeaders/ShelfPack/ShelfPack.h",
+      "local": "include/ShelfPack.h",
+      "revision": "7504a0f92694a3ccbb544e05f97304f8d0891ba9",
+      "changes": []
+    },
+    {
+      "source": "submodules/Utils/ShelfPack/Sources/shelf-pack.hpp",
+      "local": "shelf-pack.hpp",
+      "revision": "7504a0f92694a3ccbb544e05f97304f8d0891ba9",
+      "changes": [
+        "Add ShelfPack's ISC license notice."
+      ]
+    }
+  ]
+}

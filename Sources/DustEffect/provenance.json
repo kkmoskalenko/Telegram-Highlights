@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "upstream": {
+    "repository": "https://github.com/TelegramMessenger/Telegram-iOS"
+  },
+  "files": [
+    {
+      "source": "submodules/TelegramUI/Components/DustEffect/Sources/DustEffectLayer.swift",
+      "local": "DustEffectLayer.swift",
+      "revision": "7504a0f92694a3ccbb544e05f97304f8d0891ba9",
+      "changes": [
+        "Load the Metal library from Bundle.module instead of DustEffectMetalSourcesBundle and remove BundleMarker.",
+        "Remove the unused playsBackwards property."
+      ]
+    },
+    {
+      "source": "submodules/TelegramUI/Components/DustEffect/Metal/DustEffectShaders.metal",
+      "local": "Metal/DustEffectShaders.metal",
+      "revision": "7504a0f92694a3ccbb544e05f97304f8d0891ba9",
+      "changes": []
+    },
+    {
+      "source": "submodules/TelegramUI/Components/DustEffect/Metal/loki.metal",
+      "local": "Metal/loki.metal",
+      "revision": "7504a0f92694a3ccbb544e05f97304f8d0891ba9",
+      "changes": [
+        "Add Loki's MIT license notice."
+      ]
+    },
+    {
+      "source": "submodules/TelegramUI/Components/DustEffect/Metal/loki_header.metal",
+      "local": "Metal/loki_header.metal",
+      "revision": "7504a0f92694a3ccbb544e05f97304f8d0891ba9",
+      "changes": [
+        "Add Loki's MIT license notice."
+      ]
+    }
+  ]
+}

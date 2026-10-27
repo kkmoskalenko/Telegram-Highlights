@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "upstream": {
+    "repository": "https://github.com/TelegramMessenger/Telegram-iOS"
+  },
+  "files": [
+    {
+      "source": "submodules/Display/Source/Spring.swift",
+      "local": "BezierPoint.swift",
+      "revision": "f1dd7a2dbd02cbbf513e75d5695d8d36d1cf5838",
+      "changes": [
+        "Retain Bezier helpers; remove UIKit import and ViewportItemSpring."
+      ]
+    },
+    {
+      "source": "submodules/Display/Source/DeviceMetrics.swift",
+      "local": "DeviceMetrics.swift",
+      "revision": "f1dd7a2dbd02cbbf513e75d5695d8d36d1cf5838",
+      "changes": [
+        "Retain graphical-capability detection; replace UIKit with Darwin and remove unrelated device metrics."
+      ]
+    },
+    {
+      "source": "submodules/Display/Source/DisplayLinkAnimator.swift",
+      "local": "DisplayLinkAnimator.swift",
+      "revision": "7504a0f92694a3ccbb544e05f97304f8d0891ba9",
+      "changes": []
+    },
+    {
+      "source": "submodules/Display/Source/GenerateImage.swift",
+      "local": "GenerateImage.swift",
+      "revision": "f1dd7a2dbd02cbbf513e75d5695d8d36d1cf5838",
+      "changes": [
+        "Replace AsyncDisplayKit import with UIKitRuntimeUtils."
+      ]
+    },
+    {
+      "source": "submodules/Display/Source/SimpleLayer.swift",
+      "local": "SimpleLayer.swift",
+      "revision": "7504a0f92694a3ccbb544e05f97304f8d0891ba9",
+      "changes": []
+    },
+    {
+      "source": "submodules/Display/Source/UIKitUtils.swift",
+      "local": "UIKitUtils.swift",
+      "revision": "f1dd7a2dbd02cbbf513e75d5695d8d36d1cf5838",
+      "changes": [
+        "Retain animation timing, RGB color initialization and mixing, layer filters and monochromatic treatment; remove unrelated utilities and AVFoundation import."
+      ]
+    }
+  ]
+}

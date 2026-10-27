@@ -22,32 +22,40 @@ let package = Package(
     targets: [
         .target(
             name: "Display",
-            dependencies: ["UIKitRuntimeUtils"]
+            dependencies: ["UIKitRuntimeUtils"],
+            exclude: ["provenance.json"]
         ),
         .target(
             name: "DustEffect",
-            dependencies: ["MetalEngine"]
+            dependencies: ["MetalEngine"],
+            exclude: ["provenance.json"]
         ),
         .target(
             name: "GlassBackground",
-            dependencies: ["Display", "MeshTransform"]
+            dependencies: ["Display", "MeshTransform"],
+            exclude: ["provenance.json"]
         ),
         .target(
             name: "MeshTransform",
-            dependencies: ["MeshTransformApi"]
+            dependencies: ["MeshTransformApi"],
+            exclude: ["provenance.json"]
         ),
         .target(
-            name: "MeshTransformApi"
+            name: "MeshTransformApi",
+            exclude: ["provenance.json"]
         ),
         .target(
             name: "MetalEngine",
-            dependencies: ["Display", "ShelfPack"]
+            dependencies: ["Display", "ShelfPack"],
+            exclude: ["provenance.json"]
         ),
         .target(
-            name: "ShelfPack"
+            name: "ShelfPack",
+            exclude: ["provenance.json"]
         ),
         .target(
-            name: "UIKitRuntimeUtils"
+            name: "UIKitRuntimeUtils",
+            exclude: ["provenance.json"]
         ),
     ]
 )

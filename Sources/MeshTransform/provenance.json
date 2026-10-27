@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "upstream": {
+    "repository": "https://github.com/TelegramMessenger/Telegram-iOS"
+  },
+  "files": [
+    {
+      "source": "submodules/TelegramUI/Components/MeshTransform/Sources/GenerateMesh.swift",
+      "local": "GenerateMesh.swift",
+      "revision": "f1dd7a2dbd02cbbf513e75d5695d8d36d1cf5838",
+      "changes": []
+    },
+    {
+      "source": "submodules/TelegramUI/Components/MeshTransform/Sources/MeshTransform.swift",
+      "local": "MeshTransform.swift",
+      "revision": "f1dd7a2dbd02cbbf513e75d5695d8d36d1cf5838",
+      "changes": []
+    }
+  ]
+}

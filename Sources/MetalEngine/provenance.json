@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "upstream": {
+    "repository": "https://github.com/TelegramMessenger/Telegram-iOS"
+  },
+  "files": [
+    {
+      "source": "submodules/MetalEngine/Sources/AlignUp.swift",
+      "local": "AlignUp.swift",
+      "revision": "7504a0f92694a3ccbb544e05f97304f8d0891ba9",
+      "changes": []
+    },
+    {
+      "source": "submodules/MetalEngine/Sources/MetalEngine.swift",
+      "local": "MetalEngine.swift",
+      "revision": "7504a0f92694a3ccbb544e05f97304f8d0891ba9",
+      "changes": [
+        "Retain iOS implementation; remove macOS imports and conditional branches.",
+        "Load the Metal library from Bundle.module instead of MetalEngineMetalSourcesBundle.",
+        "Wrap IOSurfaceRef with IOSurface when storing the allocated surface.",
+        "Leave presentsWithTransaction disabled."
+      ]
+    },
+    {
+      "source": "submodules/MetalEngine/Sources/MetalEngineShaders.metal",
+      "local": "MetalEngineShaders.metal",
+      "revision": "7504a0f92694a3ccbb544e05f97304f8d0891ba9",
+      "changes": []
+    }
+  ]
+}

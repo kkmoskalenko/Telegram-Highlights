@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "upstream": {
+    "repository": "https://github.com/TelegramMessenger/Telegram-iOS"
+  },
+  "files": [
+    {
+      "source": "submodules/TelegramUI/Components/GlassBackgroundComponent/Sources/GlassBackgroundComponent.swift",
+      "local": "GlassBackgroundView.swift",
+      "revision": "f1dd7a2dbd02cbbf513e75d5695d8d36d1cf5838",
+      "changes": [
+        "Retain glass views and image generation; remove Component wrappers and ComponentFlow, ComponentDisplayAdapters, CoreImage and AppBundle imports.",
+        "Remove ComponentTransition parameters and animations; apply view and layer updates directly.",
+        "Remove commented-out image-rendering alternatives."
+      ]
+    },
+    {
+      "source": "submodules/TelegramUI/Components/GlassBackgroundComponent/Sources/LegacyGlassView.swift",
+      "local": "LegacyGlassView.swift",
+      "revision": "f1dd7a2dbd02cbbf513e75d5695d8d36d1cf5838",
+      "changes": [
+        "Remove ComponentFlow import and ComponentTransition parameters; apply geometry and mesh transforms directly without transition animations."
+      ]
+    },
+    {
+      "source": "submodules/TelegramUI/Components/GlassBackgroundComponent/Sources/TouchEffect.swift",
+      "local": "TouchEffect.swift",
+      "revision": "f1dd7a2dbd02cbbf513e75d5695d8d36d1cf5838",
+      "changes": []
+    }
+  ]
+}

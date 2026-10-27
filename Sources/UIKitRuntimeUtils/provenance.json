@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "upstream": {
+    "repository": "https://github.com/TelegramMessenger/Telegram-iOS"
+  },
+  "files": [
+    {
+      "source": "submodules/AsyncDisplayKit/Source/ASCGImageBuffer.mm",
+      "local": "ASCGImageBuffer.mm",
+      "revision": "f1dd7a2dbd02cbbf513e75d5695d8d36d1cf5838",
+      "changes": [
+        "Use the package-local ASCGImageBuffer header import."
+      ]
+    },
+    {
+      "source": "submodules/AsyncDisplayKit/Source/PublicHeaders/AsyncDisplayKit/ASCGImageBuffer.h",
+      "local": "include/ASCGImageBuffer.h",
+      "revision": "f1dd7a2dbd02cbbf513e75d5695d8d36d1cf5838",
+      "changes": [
+        "Replace ASBaseDefines import with its subclassing-restriction macro."
+      ]
+    },
+    {
+      "source": "submodules/UIKitRuntimeUtils/Source/UIKitRuntimeUtils/UIKitUtils.m",
+      "local": "UIKitUtils.m",
+      "revision": "f1dd7a2dbd02cbbf513e75d5695d8d36d1cf5838",
+      "changes": [
+        "Retain animation timing, graphics filters, monochromatic treatment and its field setters; remove unrelated utilities.",
+        "Remove ObjCRuntimeUtils and objc/runtime imports."
+      ]
+    },
+    {
+      "source": "submodules/UIKitRuntimeUtils/Source/UIKitRuntimeUtils/UIKitUtils.h",
+      "local": "include/UIKitUtils.h",
+      "revision": "f1dd7a2dbd02cbbf513e75d5695d8d36d1cf5838",
+      "changes": [
+        "Expose retained animation timing, graphics filters and monochromatic treatment; remove unrelated declarations."
+      ]
+    },
+    {
+      "source": "submodules/UIKitRuntimeUtils/Source/UIKitRuntimeUtils/UIViewController+Navigation.m",
+      "local": "UIViewController+Navigation.m",
+      "revision": "f1dd7a2dbd02cbbf513e75d5695d8d36d1cf5838",
+      "changes": [
+        "Retain EffectSettingsContainerView; remove unrelated implementation and ObjCRuntimeUtils/objc/runtime imports."
+      ]
+    },
+    {
+      "source": "submodules/UIKitRuntimeUtils/Source/UIKitRuntimeUtils/UIViewController+Navigation.h",
+      "local": "include/UIViewController+Navigation.h",
+      "revision": "f1dd7a2dbd02cbbf513e75d5695d8d36d1cf5838",
+      "changes": [
+        "Retain EffectSettingsContainerView; remove unrelated declarations and WebKit import."
+      ]
+    }
+  ]
+}
